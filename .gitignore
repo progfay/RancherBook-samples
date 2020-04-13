@@ -143,3 +143,5 @@ client/gopath/src/golang.org
 client/gopath/src/gopkg.in
 
 .DS_Store
+
+local/
