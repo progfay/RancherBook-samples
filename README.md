@@ -34,7 +34,7 @@ https://github.com/thinkitcojp/RancherBook-samples
 ## 実行方法
 
 基本的には、docker-composeを使って実行することを前提としています。
-サーバサイドのテストを実行する際は以下のような手順で実行します。
+クライアントサイドのテストを実行する際は以下のような手順で実行します。
 
 ```console
 $ docker-compose up --build --abort-on-container-exit --exit-code-from todo-client
