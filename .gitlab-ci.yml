@@ -28,19 +28,6 @@ todoclient_image_build:
   tags:
     - docker
 
-repository_image_build:
-  stage: build
-  image: docker:latest
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-  script:
-    - docker build -t ${CI_REGISTRY_IMAGE}/todo/repository:${CI_COMMIT_SHA} chart
-    - docker push ${CI_REGISTRY_IMAGE}/todo/repository:${CI_COMMIT_SHA}
-  tags: 
-    - docker
-
 todoserver_test:
   stage: test
   services:
