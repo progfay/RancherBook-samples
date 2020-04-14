@@ -8,10 +8,10 @@ todoserver_image_build:
   services:
     - docker:dind
   before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - docker build -t registry.gitlab.com/fufuhu/ti_rancher_k8s_sampleapp/todo/server:${CI_COMMIT_SHA} server
-    - docker push registry.gitlab.com/fufuhu/ti_rancher_k8s_sampleapp/todo/server:${CI_COMMIT_SHA}
+    - docker build -t ${CI_REGISTRY_IMAGE}/todo/server:${CI_COMMIT_SHA} server
+    - docker push ${CI_REGISTRY_IMAGE}/todo/server:${CI_COMMIT_SHA}
   tags:
     - docker
 
@@ -21,10 +21,10 @@ todoclient_image_build:
   services:
     - docker:dind
   before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - docker build --target builder -t registry.gitlab.com/fufuhu/ti_rancher_k8s_sampleapp/todo/client-builder:${CI_COMMIT_SHA} client/gopath/src
-    - docker push registry.gitlab.com/fufuhu/ti_rancher_k8s_sampleapp/todo/client-builder:${CI_COMMIT_SHA}
+    - docker build --target builder -t ${CI_REGISTRY_IMAGE}/todo/client-builder:${CI_COMMIT_SHA} client/gopath/src
+    - docker push ${CI_REGISTRY_IMAGE}/todo/client-builder:${CI_COMMIT_SHA}
   tags:
     - docker
 
@@ -34,10 +34,10 @@ repository_image_build:
   services:
     - docker:dind
   before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - docker build -t registry.gitlab.com/fufuhu/ti_rancher_k8s_sampleapp/todo/repository:${CI_COMMIT_SHA} chart
-    - docker push registry.gitlab.com/fufuhu/ti_rancher_k8s_sampleapp/todo/repository:${CI_COMMIT_SHA}
+    - docker build -t ${CI_REGISTRY_IMAGE}/todo/repository:${CI_COMMIT_SHA} chart
+    - docker push ${CI_REGISTRY_IMAGE}/todo/repository:${CI_COMMIT_SHA}
   tags: 
     - docker
 
@@ -63,7 +63,7 @@ todoserver_test:
     # 利用するDjangoの設定ファイル
     DJANGO_SETTINGS_MODULE: sampleapp.settings_mysql
 
-  image: registry.gitlab.com/fufuhu/ti_rancher_k8s_sampleapp/todo/server:${CI_COMMIT_SHA}
+  image: ${CI_REGISTRY_IMAGE}/todo/server:${CI_COMMIT_SHA}
   script:
     - |
       cd server/sampleapp
@@ -72,7 +72,7 @@ todoserver_test:
 todoclient_test:
   stage: test
   services: 
-    - name: registry.gitlab.com/fufuhu/ti_rancher_k8s_sampleapp/todo/server:${CI_COMMIT_SHA}
+    - name: ${CI_REGISTRY_IMAGE}/todo/server:${CI_COMMIT_SHA}
       alias: todo-server
       command:
         - /bin/sh
@@ -85,7 +85,7 @@ todoclient_test:
           gunicorn -w 2 -b 0.0.0.0:8000 sampleapp.wsgi
 
 
-  image: registry.gitlab.com/fufuhu/ti_rancher_k8s_sampleapp/todo/client-builder:${CI_COMMIT_SHA}
+  image: ${CI_REGISTRY_IMAGE}/todo/client-builder:${CI_COMMIT_SHA}
   variables:
     TODO_TESTSERVER: "todo-server"
     TODO_SERVER_ENVIRONMENT: "ci"
