@@ -1,4 +1,4 @@
-version: '3.4'
+version: "3.4"
 services:
   todo-client:
     build:
@@ -30,33 +30,3 @@ services:
         ./todo delete --id `./todo create --title "todoGet" --description "Get"| grep "ID" | sed -e 's/ID: //'`
         echo `date +"%Y/%m/%d %H:%M:%S"`" 生成したバイナリからupdateサブコマンドを実行します。"
         ./todo update --id `./todo create --title "todoGet" --description "Get"| grep "ID" | sed -e 's/ID: //'` --title "updated" --description "updated description" --status "RUNNING"
-        
-
-
-  todo-server:
-    build:
-      context: server/
-    environment:
-      MYSQL_USER: test
-      MYSQL_PASSWORD: test
-      MYSQL_DATABASE: sampleapp
-      MYSQL_HOST: todo-mysql
-    command:
-      - /bin/sh
-      - -e
-      - -c
-      - |
-        sleep 5
-        python manage.py migrate
-        python manage.py loaddata sampleapp/fixtures/test_user
-        python manage.py loaddata task_status #追加
-        gunicorn -w 2 -b 0.0.0.0:8000 sampleapp.wsgi
-  todo-mysql:
-    image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: test
-      MYSQL_PASSWORD: test
-      MYSQL_DATABASE: sampleapp
-    expose:
-      - 3306
